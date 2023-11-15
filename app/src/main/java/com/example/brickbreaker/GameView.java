@@ -2,7 +2,6 @@ package com.example.brickbreaker;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,8 +13,8 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.os.Handler;
-
 import java.util.Random;
+
 
 public class GameView extends View {
     // Variables for the game context, ball, paddle, and more
@@ -97,7 +96,6 @@ public class GameView extends View {
         }
     }
 
-
     // Method for creating bricks in the game
     @Override
     protected void onDraw(Canvas canvas) {
@@ -123,7 +121,6 @@ public class GameView extends View {
             life--;
             if (life == 0) {
                 gameOver = true;
-//                launchGameOver();
             }
         }
             if(((ballX + ball.getWidth()) >= paddleX)
@@ -150,6 +147,7 @@ public class GameView extends View {
                 healthPaint.setColor(Color.RED);
             }
             canvas.drawRect(dWidth-2, 30, dWidth-200 + 60 * life, 80, healthPaint);
+
             // ball hitting brick
             for(int i=0; i<numBrick; i++){
                 if(brick[i].getVisibility()){
@@ -164,8 +162,8 @@ public class GameView extends View {
                         brick[i].setInvisible();
                         points += 10;
                         brokenBricks++;
+
                         if(brokenBricks == 24){
-//                            launchGameOver();
                         }
                     }
                 }
@@ -204,15 +202,6 @@ public class GameView extends View {
             }
         }
         return true;
-    }
-
-    private void launchGameOver() {
-        // Method to handle game over logic and navigation
-        handler.removeCallbacksAndMessages(null);
-//        Intent intent = new Intent(context, GameOver.class);
-//        intent.putExtra("points", points);
-//        context.startActivity(intent);
-        ((Activity) context).finish();
     }
 
     private int xVelocity() {

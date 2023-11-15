@@ -1,7 +1,7 @@
 package com.example.brickbreaker;
 
 public class Brick {
-    private boolean isVisible;
+    boolean isVisible;
     public int row, column, width, height;
 
     public Brick(int row, int column, int width, int height){
