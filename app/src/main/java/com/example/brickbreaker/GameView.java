@@ -2,6 +2,7 @@ package com.example.brickbreaker;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -121,6 +122,7 @@ public class GameView extends View {
             life--;
             if (life == 0) {
                 gameOver = true;
+                launchGameOver();
             }
         }
             if(((ballX + ball.getWidth()) >= paddleX)
@@ -164,6 +166,7 @@ public class GameView extends View {
                         brokenBricks++;
 
                         if(brokenBricks == 24){
+                            launchGameOver();
                         }
                     }
                 }
@@ -202,6 +205,14 @@ public class GameView extends View {
             }
         }
         return true;
+    }
+
+    private void launchGameOver(){
+        handler.removeCallbacksAndMessages(null);
+        Intent intent = new Intent(context, GameOver.class);
+        intent.putExtra("points", points);
+        context.startActivity(intent);
+        ((Activity) context).finish();
     }
 
     private int xVelocity() {
