@@ -3,14 +3,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFF"
+    android:background="#E1F5FE"
     android:padding="10dp">
     
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,6 +25,7 @@
             android:background="@drawable/exit"
             android:onClick="exit"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,7 +37,6 @@
             android:id="@+id/ivNewHeighest"
             android:visibility="gone"
             android:background="@drawable/new_highest" />
-    </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +54,9 @@
                 android:textSize="50sp"
                 android:textColor="@android:color/holo_blue_dark" />
         </LinearLayout>
-    <View
-        android:layout_width="1dp"
-        android:layout_height="80dp"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="80dp"/>
+    </LinearLayout>
+
 </LinearLayout>

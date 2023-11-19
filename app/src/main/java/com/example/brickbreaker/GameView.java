@@ -44,6 +44,8 @@ public class GameView extends View {
     int brokenBricks = 0;
     boolean gameOver = false;
 
+    VelocityManager velocityManager;
+
 
     public GameView(Context context) {
         super(context);
@@ -51,6 +53,9 @@ public class GameView extends View {
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
         paddle = BitmapFactory.decodeResource(getResources(), R.drawable.paddle);
         handler = new Handler();
+//        scoreManager = new ScoreManager(context);
+
+        velocityManager = new VelocityManager();
 
         // Runnable for updating the game view
         runnable = new Runnable() {
@@ -83,7 +88,6 @@ public class GameView extends View {
         ballHeight = ball.getHeight();
         createBricks();
     }
-
 
     // Get screen dimensions
     private void createBricks() {
@@ -120,11 +124,18 @@ public class GameView extends View {
             velocity.setX(xVelocity());
             velocity.setY(32);
             life--;
+
             if (life == 0) {
                 gameOver = true;
                 launchGameOver();
             }
+
+            if (life > 0) {
+                velocityManager.increaseVelocity(1000, 1000); // Increase speed
+            }
         }
+
+
             if(((ballX + ball.getWidth()) >= paddleX)
             && (ballX <= paddleX + paddle.getWidth())
             && (ballY + ball.getHeight() >= paddleY)
@@ -177,7 +188,6 @@ public class GameView extends View {
             }
             if(!gameOver){
                 handler.postDelayed(runnable, UPDATE_MILLIS);
-
             }
         }
 
@@ -222,3 +232,4 @@ public class GameView extends View {
         return values[index];
     }
 }
+

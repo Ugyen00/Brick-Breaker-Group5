@@ -14,7 +14,6 @@ public class GameOver extends AppCompatActivity {
     TextView tvPoints;
     ImageView ivNewHighest;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
