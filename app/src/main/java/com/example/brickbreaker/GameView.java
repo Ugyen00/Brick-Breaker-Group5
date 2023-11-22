@@ -3,6 +3,7 @@ package com.example.brickbreaker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -43,9 +44,7 @@ public class GameView extends View {
     int numBrick = 0;
     int brokenBricks = 0;
     boolean gameOver = false;
-
     VelocityManager velocityManager;
-
 
     public GameView(Context context) {
         super(context);
@@ -53,7 +52,6 @@ public class GameView extends View {
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
         paddle = BitmapFactory.decodeResource(getResources(), R.drawable.paddle);
         handler = new Handler();
-//        scoreManager = new ScoreManager(context);
 
         velocityManager = new VelocityManager();
 
@@ -131,10 +129,9 @@ public class GameView extends View {
             }
 
             if (life > 0) {
-                velocityManager.increaseVelocity(1000, 1000); // Increase speed
+                velocityManager.increaseVelocity(5, 5); // Increase speed
             }
         }
-
 
             if(((ballX + ball.getWidth()) >= paddleX)
             && (ballX <= paddleX + paddle.getWidth())
@@ -232,4 +229,5 @@ public class GameView extends View {
         return values[index];
     }
 }
+
 
