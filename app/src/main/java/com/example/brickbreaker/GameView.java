@@ -40,7 +40,15 @@ public class GameView extends View {
     int ballWidth, ballHeight;
     MediaPlayer mpHit, mpMiss, mpBreak;
     Random random;
-    Brick[] brick = new Brick[30];
+
+    //array to hold bricks
+//    Brick[] brick = new Brick[30];
+//    int numBrick = 0;
+//    int brokenBricks = 0;
+//    boolean gameOver = false;
+//    VelocityManager velocityManager;
+
+    BrickMap brickMap = new BrickMap();
     int numBrick = 0;
     int brokenBricks = 0;
     boolean gameOver = false;
@@ -53,6 +61,7 @@ public class GameView extends View {
         paddle = BitmapFactory.decodeResource(getResources(), R.drawable.paddle);
         handler = new Handler();
 
+        createBricks();
         velocityManager = new VelocityManager();
 
         // Runnable for updating the game view
@@ -93,16 +102,29 @@ public class GameView extends View {
         int brickHeight = dHeight / 16;
         for (int column = 0; column < 8; column++) {
             for (int row = 0; row < 3; row++) {
-                brick[numBrick] = new Brick(row, column, brickWidth, brickHeight);
+                int key = numBrick; // Use numBrick as the key for each brick
+                Brick newBrick = new Brick(row, column, brickWidth, brickHeight);
+                brickMap.put(key, newBrick); // Store the brick in the BrickMap with its key
                 numBrick++;
             }
         }
     }
+//    private void createBricks() {
+//        int brickWidth = dWidth / 8;
+//        int brickHeight = dHeight / 16;
+//        for (int column = 0; column < 8; column++) {
+//            for (int row = 0; row < 3; row++) {
+//                brick[numBrick] = new Brick(row, column, brickWidth, brickHeight);
+//                numBrick++;
+//            }
+//        }
+//    }
 
     // Method for creating bricks in the game
     @Override
     protected void onDraw(Canvas canvas) {
         // The main game loop where everything is drawn and updated
+        //Game Loop
         super.onDraw(canvas);
         canvas.drawColor(Color.BLACK);
         ballX += velocity.getX();
@@ -128,11 +150,13 @@ public class GameView extends View {
                 launchGameOver();
             }
 
-            if (life > 0) {
-                velocityManager.increaseVelocity(5, 5); // Increase speed
-            }
+//            if (life > 0) {
+//                velocityManager.increaseVelocity(5, 5);
+//            }
         }
 
+        //hitting paddle algo
+        //collision detection
             if(((ballX + ball.getWidth()) >= paddleX)
             && (ballX <= paddleX + paddle.getWidth())
             && (ballY + ball.getHeight() >= paddleY)
@@ -145,31 +169,43 @@ public class GameView extends View {
             }
             canvas.drawBitmap(ball, ballX, ballY, null);
             canvas.drawBitmap(paddle, paddleX, paddleY, null);
-            for(int i=0; i<numBrick; i++){
-                if(brick[i].getVisibility()){
-                    canvas.drawRect(brick[i].column * brick[i].width + 1, brick[i].row * brick[i].height + 1, brick[i].column * brick[i].width + brick[i].width -1, brick[1].row * brick[i].height + brick[i].height -1, brickPaint);
-                }
+
+        for (int i = 0; i < brickMap.size(); i++) {
+            Brick currentBrick = brickMap.get(i);
+            if (currentBrick != null && currentBrick.getVisibility()) {
+                canvas.drawRect(
+                        currentBrick.column * currentBrick.width + 1,
+                        currentBrick.row * currentBrick.height + 1,
+                        (currentBrick.column + 1) * currentBrick.width - 1,
+                        (currentBrick.row + 1) * currentBrick.height - 1,
+                        brickPaint
+                );
             }
+        }
+            //life color change
             canvas.drawText("" + points, 20, TEXT_SIZE, textPaint);
             if(life == 2){
                 healthPaint.setColor(Color.YELLOW);
+                velocityManager.increaseVelocity(30, 30);
             }else  if (life == 1){
                 healthPaint.setColor(Color.RED);
+                velocityManager.increaseVelocity(60, 60);
             }
             canvas.drawRect(dWidth-2, 30, dWidth-200 + 60 * life, 80, healthPaint);
 
-            // ball hitting brick
+            // ball hitting brick algo
+            //collision detection
             for(int i=0; i<numBrick; i++){
-                if(brick[i].getVisibility()){
-                    if (ballX + ballWidth >= brick[i].column * brick[i].width
-                    && ballX <= brick[i].column * brick[i].width + brick[i].width
-                    && ballY <= brick[i].row * brick[i].height + brick[i].height
-                    && ballY >= brick[i].row * brick[i].height){
+                if(brickMap.get(i).getVisibility()){
+                    if (ballX + ballWidth >= brickMap.get(i).column * brickMap.get(i).width
+                    && ballX <= brickMap.get(i).column * brickMap.get(i).width + brickMap.get(i).width
+                    && ballY <= brickMap.get(i).row * brickMap.get(i).height + brickMap.get(i).height
+                    && ballY >= brickMap.get(i).row * brickMap.get(i).height){
                         if(mpBreak != null){
                             mpBreak.start();
                         }
                         velocity.setY((velocity.getY() + 1) * -1);
-                        brick[i].setInvisible();
+                        brickMap.get(i).setInvisible();
                         points += 10;
                         brokenBricks++;
 
@@ -190,6 +226,7 @@ public class GameView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //handling user input
         // Handle touch events for controlling the paddle
         float touchX = event.getX();
         float touchY = event.getY();
