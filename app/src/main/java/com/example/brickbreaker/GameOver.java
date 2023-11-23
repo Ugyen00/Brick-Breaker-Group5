@@ -1,5 +1,7 @@
 package com.example.brickbreaker;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,10 +19,11 @@ public class GameOver extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_over);
+
+        int points = getIntent().getIntExtra("points", 0);
+
         ivNewHighest = findViewById(R.id.ivNewHeighest);
         tvPoints = findViewById(R.id.tvPoints);
-
-        int points = getIntent().getExtras().getInt("points");
 
         if(points == 240){
             ivNewHighest.setVisibility(View.VISIBLE);
@@ -28,6 +31,7 @@ public class GameOver extends AppCompatActivity {
         tvPoints.setText("" + points);
     }
     public void restart(View view){
+
         Intent intent = new Intent(GameOver.this, MainActivity.class);
         startActivity(intent);
         finish();
@@ -37,5 +41,3 @@ public class GameOver extends AppCompatActivity {
         finish();
     }
 }
-
-

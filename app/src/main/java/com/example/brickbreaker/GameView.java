@@ -29,11 +29,9 @@ public class GameView extends View {
     Paint healthPaint = new Paint();
     Paint brickPaint = new Paint();
     Paint textPaint = new Paint();
-
     float TEXT_SIZE = 120;
     float paddleX, paddleY;
     float oldX, oldPaddleX;
-    int points = 0;
     int life = 3;
     Bitmap ball, paddle;
     int dWidth, dHeight;
@@ -41,18 +39,19 @@ public class GameView extends View {
     MediaPlayer mpHit, mpMiss, mpBreak;
     Random random;
 
-    //array to hold bricks
-//    Brick[] brick = new Brick[30];
-//    int numBrick = 0;
-//    int brokenBricks = 0;
-//    boolean gameOver = false;
-//    VelocityManager velocityManager;
-
+    //hashmap for brick storage
     BrickMap brickMap = new BrickMap();
     int numBrick = 0;
     int brokenBricks = 0;
     boolean gameOver = false;
+
     VelocityManager velocityManager;
+
+    //Point Array
+    int[] pointsArray = new int[240]; // Array to hold points, assuming a maximum of 100 points
+    int pointsIndex = 0;
+    int points;
+
 
     public GameView(Context context) {
         super(context);
@@ -62,6 +61,7 @@ public class GameView extends View {
         handler = new Handler();
 
         createBricks();
+
         velocityManager = new VelocityManager();
 
         // Runnable for updating the game view
@@ -109,16 +109,33 @@ public class GameView extends View {
             }
         }
     }
-//    private void createBricks() {
-//        int brickWidth = dWidth / 8;
-//        int brickHeight = dHeight / 16;
-//        for (int column = 0; column < 8; column++) {
-//            for (int row = 0; row < 3; row++) {
-//                brick[numBrick] = new Brick(row, column, brickWidth, brickHeight);
-//                numBrick++;
-//            }
-//        }
-//    }
+
+    // Method to add points to the array
+    private void addPoints(int value) {
+        if (pointsIndex < pointsArray.length) {
+            pointsArray[pointsIndex] = value;
+            pointsIndex++;
+        }
+    }
+
+    //Point storing
+
+    // Method to calculate the total points from the array
+    private int calculateTotalPoints() {
+        int total = 0;
+        for (int i = 0; i < pointsIndex; i++) {
+            total += pointsArray[i];
+        }
+        return total;
+    }
+
+    // Method to update the points by adding to the array
+    private void updatePoints(int value) {
+        addPoints(value); // Add new points to the array
+        points = calculateTotalPoints(); // Update points with the total from the array
+    }
+
+
 
     // Method for creating bricks in the game
     @Override
@@ -150,10 +167,15 @@ public class GameView extends View {
                 launchGameOver();
             }
 
-//            if (life > 0) {
-//                velocityManager.increaseVelocity(5, 5);
-//            }
+            if (life == 1) {
+                velocityManager.increaseVelocity(5, 5);
+            }else if (life == 2) {
+                velocityManager.increaseVelocity(50, 50);
+            }else {
+                velocityManager.increaseVelocity(100, 100);
+            }
         }
+
 
         //hitting paddle algo
         //collision detection
@@ -183,13 +205,12 @@ public class GameView extends View {
             }
         }
             //life color change
-            canvas.drawText("" + points, 20, TEXT_SIZE, textPaint);
-            if(life == 2){
+//            canvas.drawText("" + points, 20, TEXT_SIZE, textPaint);
+        canvas.drawText("" + calculateTotalPoints(), 20, TEXT_SIZE, textPaint);
+        if(life == 2){
                 healthPaint.setColor(Color.YELLOW);
-                velocityManager.increaseVelocity(30, 30);
             }else  if (life == 1){
                 healthPaint.setColor(Color.RED);
-                velocityManager.increaseVelocity(60, 60);
             }
             canvas.drawRect(dWidth-2, 30, dWidth-200 + 60 * life, 80, healthPaint);
 
@@ -206,7 +227,7 @@ public class GameView extends View {
                         }
                         velocity.setY((velocity.getY() + 1) * -1);
                         brickMap.get(i).setInvisible();
-                        points += 10;
+                        updatePoints(10);
                         brokenBricks++;
 
                         if(brokenBricks == 24){
@@ -222,6 +243,11 @@ public class GameView extends View {
             if(!gameOver){
                 handler.postDelayed(runnable, UPDATE_MILLIS);
             }
+
+        if(brokenBricks == numBrick){
+            gameOver = true;
+            launchGameOver();
+        }
         }
 
     @Override
@@ -253,8 +279,9 @@ public class GameView extends View {
 
     private void launchGameOver(){
         handler.removeCallbacksAndMessages(null);
+
         Intent intent = new Intent(context, GameOver.class);
-        intent.putExtra("points", points);
+        intent.putExtra("points", calculateTotalPoints());
         context.startActivity(intent);
         ((Activity) context).finish();
     }
